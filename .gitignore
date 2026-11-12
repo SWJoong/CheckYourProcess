@@ -1,0 +1,16 @@
+node_modules/
+dist/
+release/
+.local/
+*.sqlite*
+*.log
+.env
+.env.*
+.checkyourprocess/
+coverage/
+runtime.json
+token
+*.mcpb
+*.zip
+.DS_Store
+Thumbs.db

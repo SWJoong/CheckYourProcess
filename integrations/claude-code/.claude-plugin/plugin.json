@@ -1,0 +1,10 @@
+{
+  "name": "checkyourprocess",
+  "version": "0.1.0-beta.5",
+  "description": "Opt-in progress bands for sessions and parallel projects. 한국어 / English.",
+  "author": { "name": "CheckYourProcess" },
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": "./.mcp.json",
+  "skills": "./skills/",
+  "types": "./types/index.d.ts"
+}

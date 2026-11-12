@@ -1,0 +1,17 @@
+{
+  "manifest_version": "0.3",
+  "name": "checkyourprocess",
+  "display_name": "CheckYourProcess",
+  "version": "0.1.0-beta.5",
+  "description": "작업별·프로젝트별 실시간 진행 바. 한국어 / English.",
+  "long_description": "로컬에 저장되는 작업 진행률과 병렬 세션을 대화 안에서 확인합니다. 카드의 설정에서 한국어와 English를 선택할 수 있습니다. 추적 시작을 요청한 작업만 기록합니다.",
+  "author": { "name": "CheckYourProcess" },
+  "server": {
+    "type": "node",
+    "entry_point": "dist/stdio.js",
+    "mcp_config": { "command": "node", "args": ["${__dirname}/dist/stdio.js"] }
+  },
+  "tools_generated": true,
+  "compatibility": { "platforms": ["win32"], "runtimes": { "node": ">=22.20.0" } },
+  "localization": { "resources": "locales/${locale}.json", "default_locale": "ko-KR" }
+}

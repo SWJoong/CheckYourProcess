@@ -1,0 +1,5 @@
+{
+  "display_name": "CheckYourProcess",
+  "description": "Live progress bands for sessions and parallel projects. 한국어 / English.",
+  "long_description": "View locally stored task progress and parallel sessions inside your conversation. Choose English or Korean in the card settings. Only explicitly started tasks are tracked."
+}

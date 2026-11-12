@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "SessionStart": [{ "hooks": [{ "type": "command", "command": "node \"${PLUGIN_ROOT}/hooks/relay.mjs\" codex session-start", "timeout": 5 }] }],
+    "UserPromptSubmit": [{ "hooks": [{ "type": "command", "command": "node \"${PLUGIN_ROOT}/hooks/relay.mjs\" codex prompt", "timeout": 5 }] }],
+    "PreToolUse": [{ "hooks": [{ "type": "command", "command": "node \"${PLUGIN_ROOT}/hooks/relay.mjs\" codex tool-start", "timeout": 5 }] }],
+    "PostToolUse": [{ "hooks": [{ "type": "command", "command": "node \"${PLUGIN_ROOT}/hooks/relay.mjs\" codex tool-end", "timeout": 5 }] }],
+    "PermissionRequest": [{ "hooks": [{ "type": "command", "command": "node \"${PLUGIN_ROOT}/hooks/relay.mjs\" codex permission", "timeout": 5 }] }],
+    "Stop": [{ "hooks": [{ "type": "command", "command": "node \"${PLUGIN_ROOT}/hooks/relay.mjs\" codex stop", "timeout": 5 }] }],
+    "Interrupt": [{ "hooks": [{ "type": "command", "command": "node \"${PLUGIN_ROOT}/hooks/relay.mjs\" codex interrupt", "timeout": 5 }] }],
+    "SessionEnd": [{ "hooks": [{ "type": "command", "command": "node \"${PLUGIN_ROOT}/hooks/relay.mjs\" codex session-end", "timeout": 5 }] }]
+  }
+}

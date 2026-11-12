@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "checkyourprocess": {
+      "command": "node",
+      "args": ["${PLUGIN_ROOT}/dist/stdio.js"]
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "checkyourprocess",
+  "version": "0.1.0-beta.5",
+  "description": "Track opt-in session and parallel-project progress. 한국어 / English.",
+  "author": { "name": "CheckYourProcess" },
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": "./.mcp.json",
+  "requires_local_executor": true,
+  "interface": {
+    "displayName": "CheckYourProcess",
+    "shortDescription": "Live progress for parallel AI tasks",
+    "longDescription": "A local progress card with session/project views, canonical shared tasks and Korean/English settings. Tracking begins only when requested.",
+    "developerName": "CheckYourProcess",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write", "Instructions", "Lifecycle hooks"],
+    "brandColor": "#FFFFFF",
+    "defaultPrompt": ["Start tracking this task.", "이 작업의 진행률 추적을 시작해 주세요."]
+  }
+}
