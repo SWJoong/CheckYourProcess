@@ -1,0 +1,61 @@
+name: 버그 보고
+description: 진행률이 틀리게 나오거나 상태가 잘못 표시되는 등 의도와 다르게 동작하는 문제를 알려 줍니다.
+title: "[버그] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **인증 URL, 토큰, DB 파일, 개인 로그, 실제 이용자나 사례 정보는 붙이지 마세요.** 작업 이름 예시도 지어낸 값으로 적어 주세요.
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 플랫폼
+      options:
+        - Claude Code (터미널)
+        - Claude Desktop — Code 탭
+        - Claude Desktop — Chat 탭 (.mcpb)
+        - Codex CLI
+        - Codex 앱
+        - ChatGPT
+        - 모든 플랫폼 공통 / 잘 모르겠음
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: OS, 앱 버전, CheckYourProcess 버전
+      description: 예) Windows 11 / Claude Code 2.1.323 / 0.1.0-beta.5
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: 무슨 일이 일어났나요
+      description: 기대한 결과와 실제 결과를 나눠 적어 주세요.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 재현 단계
+      description: 번호를 붙여 한 단계씩 적어 주세요. 매번 일어나는지, 가끔 일어나는지도 알려 주세요.
+    validations:
+      required: true
+  - type: textarea
+    id: numbers
+    attributes:
+      label: 화면에 보인 숫자와 상태
+      description: 예) 완료 2/5, 진행률 40%, 활동 상태 '실행 중'. 이 프로젝트는 완료율과 활동 상태를 따로 보여 주므로 둘 다 적어 주세요.
+  - type: textarea
+    id: logs
+    attributes:
+      label: 오류 메시지·로그
+      description: 필요한 부분만 붙여 주세요. 토큰·URL·경로에 든 이름 등이 섞여 있지 않은지 먼저 확인합니다.
+      render: text
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 개인정보 확인
+      options:
+        - label: 인증 URL·토큰·DB·개인 로그·실제 이용자 정보가 글과 첨부에 없습니다.
+          required: true

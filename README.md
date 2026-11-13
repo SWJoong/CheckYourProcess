@@ -110,16 +110,32 @@ ChatGPT / Claude Desktop / Claude Code / Codex CLI를 평소 사용하는 분들
 
 참여하려면 [GitHub 이슈](https://github.com/SWJoong/CheckYourProcess/issues)에 **관심 플랫폼, 사용 환경·버전, 개선하고 싶은 문제, 가능한 참여 범위**를 남겨 주세요. [기여 안내](CONTRIBUTING.md)에 첫 작업과 검증 방법을 정리했습니다. 공통 저장·집계·인증은 유지하고 플랫폼별 연결 부분부터 개선합니다.
 
+### 어떻게 나누어 맡나요
+
+플랫폼 하나씩 맡는 것을 기본으로 합니다. 새 기능보다 **내 플랫폼에서 설치 → 첫 추적 → 재시작 후 복원까지 해 보고 결과를 남기는 일**을 첫 과제로 권합니다. 막힌 지점이 다음 개선 과제가 됩니다.
+
+| 담당 | 주로 보는 위치 | 첫 과제 예시 |
+| --- | --- | --- |
+| Claude Code (Desktop의 Code 탭 포함) | `integrations/claude-code/` | 설치·업데이트 재현, 바 표시 확인, 훅과 병렬 작업 상태 |
+| Claude Desktop (Chat 탭) | `integrations/claude-desktop/` | `.mcpb` 설치, 카드 연결·재연결 |
+| Codex CLI·앱 | `integrations/codex/` | 설치 재현, 계획·활동 이벤트 차이 기록 |
+| ChatGPT | `src/stdio.ts`, [설치 안내](docs/installation.md)의 ChatGPT 절 | 계정별 연결·터널 안내 재현 |
+| 문구·문서 (코드 없이 가능) | `docs/`, `README.md`, 화면 문구 | 한국어·영어 문구 다듬기, 설치 안내를 처음 보는 사람의 눈으로 확인 |
+
+- **공통 영역은 유지 관리자가 맡습니다.** 저장·집계·인증·번역(`src/store.ts`, `src/service.ts`, `src/types.ts`, `src/mcp.ts`, `src/runtime.ts`, `src/i18n.ts`), 공용 카드(`src/ui/`), 훅 전달(`integrations/shared/`)은 모든 플랫폼이 함께 쓰므로, 바꾸고 싶다면 먼저 이슈로 범위를 정한 뒤 테스트와 함께 작은 PR로 보내 주세요.
+- **AI 코딩 도구를 쓰는 참여를 전제로** 지켜야 할 규칙을 [AGENTS.md](AGENTS.md)에 적었습니다(Claude Code는 `CLAUDE.md`를 통해 읽습니다). 리뷰 담당은 [`.github/CODEOWNERS`](.github/CODEOWNERS), 이슈·PR 양식은 `.github/` 폴더에 있습니다. PR은 CI(Windows에서 타입 검사·테스트·패키징)를 통과한 뒤 병합하는 것을 원칙으로 합니다.
+- **지어낸 데이터만 씁니다.** 실제 이용자·사례 같은 개인 정보, 인증 URL, 토큰, 로그를 작업 이름·스크린샷·이슈·PR에 넣지 마세요.
+
 함께할 분이 모이지 않아도 개발을 이어갑니다. 현재 검증 기반이 있는 **Claude Code → Claude Desktop → Codex CLI → ChatGPT** 순으로 설치와 기본 작동을 직접 다듬을 예정입니다. 모집 인원이나 출시 날짜를 전제로 진행하지 않습니다.
 
 ## 시연 영상
 
-두 영상 모두 **소리 없는 배속 요약본**이며, 자막과 빨간 사각형으로 확인할 부분을 표시했습니다. 영상 파일은 저장소의 `docs/videos/`에 포함합니다. 링크를 열어 파일을 확인하거나 다운로드할 수 있습니다.
+두 영상 모두 **소리 없는 배속 요약본**이며, 자막과 빨간 사각형으로 확인할 부분을 표시했습니다. 같은 영상을 유튜브 Shorts에 올렸고, 영상 파일은 저장소의 `docs/videos/`에도 포함합니다.
 
 | 영상 | 보여 주는 흐름 |
 | --- | --- |
-| [Claude Code 터미널 · 56초](https://github.com/SWJoong/CheckYourProcess/blob/main/docs/videos/shoot-auto-summary.mp4) | 추적 시작, 작업 3개 등록, 33%, 상세·언어 전환, 두 번째 세션 연결, 66%, 종료·서비스 재시작·명시적 재개 |
-| [Claude Desktop Code 탭 · 약 45초](https://github.com/SWJoong/CheckYourProcess/blob/main/docs/videos/desktop-code-summary.mp4) | 새 Code 세션에서 작업 5개 등록, 진행 바 갱신, 5/5·100%, 추적 종료 |
+| Claude Code 터미널 · 56초<br>[유튜브](https://www.youtube.com/shorts/55RuXNqQ_DI) · [영상 파일](https://github.com/SWJoong/CheckYourProcess/blob/main/docs/videos/shoot-auto-summary.mp4) | 추적 시작, 작업 3개 등록, 33%, 상세·언어 전환, 두 번째 세션 연결, 66%, 종료·서비스 재시작·명시적 재개 |
+| Claude Desktop Code 탭 · 약 45초<br>[유튜브](https://www.youtube.com/shorts/22EMteCGKSk) · [영상 파일](https://github.com/SWJoong/CheckYourProcess/blob/main/docs/videos/desktop-code-summary.mp4) | 새 Code 세션에서 작업 5개 등록, 진행 바 갱신, 5/5·100%, 추적 종료 |
 
 터미널 영상은 Claude Code **2.1.323**의 전체 화면 렌더러를 사용했습니다. **키·마우스 입력은 자동화 도구로 주입**했고, 모델 응답과 도구 호출은 실제 Claude Code에서 실행됐습니다. Desktop 영상은 **Claude Desktop 5.11492의 Code 탭**이며 사이드바 자르기·계정 메뉴 가림 처리를 했습니다. 일반 Chat 탭의 `.mcpb` 카드를 시연한 영상은 아닙니다.
 

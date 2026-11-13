@@ -1,0 +1,60 @@
+name: 기능·문구·문서 개선 제안
+description: 불편했던 점, 헷갈린 문구, 부족한 문서, 필요한 기능을 제안합니다.
+title: "[개선] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        지금은 **설치와 기본 동작을 안정화하는 단계**라서, 새 기능보다 막힘을 먼저 해결합니다. 큰 기능을 제안하실 때는 어떤 상황에서 불편했는지부터 적어 주세요.
+
+        **인증 URL, 토큰, DB 파일, 개인 로그, 실제 이용자나 사례 정보는 붙이지 마세요.**
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 종류
+      options:
+        - 화면 문구·번역
+        - 문서·설치 안내
+        - 사용성 (헷갈리거나 불편함)
+        - 새 기능
+        - 기타
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 관련 플랫폼
+      options:
+        - Claude Code (터미널)
+        - Claude Desktop — Code 탭
+        - Claude Desktop — Chat 탭 (.mcpb)
+        - Codex CLI
+        - Codex 앱
+        - ChatGPT
+        - 모든 플랫폼 공통
+    validations:
+      required: true
+  - type: textarea
+    id: situation
+    attributes:
+      label: 어떤 상황이었나요
+      description: 무엇을 하려다 어디서 불편했는지 적어 주세요. 개발 용어를 몰라도 괜찮습니다. 보이는 대로 적어 주세요.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: 이렇게 바뀌면 좋겠어요
+      description: 생각해 둔 방법이 있다면 적어 주세요. 없어도 됩니다.
+  - type: textarea
+    id: scope
+    attributes:
+      label: 직접 맡아 볼 수 있나요
+      description: 직접 고쳐 보고 싶다면 어디까지 할 수 있을지(문서만, 문구만, 코드까지 등) 적어 주세요. 공통 코드(`src/`)를 건드려야 하는 제안은 시작 전에 이 이슈에서 범위를 먼저 정합니다.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 개인정보 확인
+      options:
+        - label: 인증 URL·토큰·DB·개인 로그·실제 이용자 정보가 글과 첨부에 없습니다.
+          required: true

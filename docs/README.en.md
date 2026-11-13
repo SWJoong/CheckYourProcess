@@ -89,16 +89,32 @@ This beta uses one local database on one PC. Cross-PC collaboration, macOS/Linux
 
 Contributors can focus on **ChatGPT, Claude Desktop, Claude Code or Codex CLI**. Installation reports, documentation and small fixes are welcome. Open a [GitHub issue](https://github.com/SWJoong/CheckYourProcess/issues) with your platform/version, the problem and the scope you can take on. See [Contributing](../CONTRIBUTING.md) for starter tasks and shared invariants.
 
+### How parts are shared
+
+The default is one platform per person. Rather than new features, the suggested first task is **to run install → first tracked task → restart recovery on your own platform and record the result**; whatever blocks you becomes the next improvement task.
+
+| Part | Where to look | Starter tasks |
+| --- | --- | --- |
+| Claude Code (including the Claude Desktop Code tab) | `integrations/claude-code/` | Reproduce install/update, check the band, hooks and parallel-task states |
+| Claude Desktop (Chat tab) | `integrations/claude-desktop/` | `.mcpb` install, card connection and reconnection |
+| Codex CLI / app | `integrations/codex/` | Reproduce install, note plan/activity event differences |
+| ChatGPT | `src/stdio.ts`, the ChatGPT section of [installation](installation.md) | Reproduce per-account connection and tunnel steps |
+| Wording and docs (no coding needed) | `docs/`, `README.md`, UI strings | Polish Korean/English wording, read the install guide as a first-time user |
+
+- **Shared areas stay with the maintainer.** Storage, aggregation, authentication and translation (`src/store.ts`, `src/service.ts`, `src/types.ts`, `src/mcp.ts`, `src/runtime.ts`, `src/i18n.ts`), the shared card (`src/ui/`) and the hook relay (`integrations/shared/`) are used by every platform. Agree on the scope in an issue first, then send a small PR with tests.
+- **Rules for AI coding tools** are in [AGENTS.md](../AGENTS.md) (Claude Code reads it through `CLAUDE.md`). Reviewers are listed in [`.github/CODEOWNERS`](../.github/CODEOWNERS), and the issue and PR forms live in `.github/`. The intent is that a PR passes CI (type check, tests and packaging on Windows) before it is merged.
+- **Use made-up data only.** Never put real service-user or case information, auth URLs, tokens or logs in task names, screenshots, issues or PRs.
+
 Development will continue even without contributors, in the initial order Claude Code → Claude Desktop → Codex CLI → ChatGPT. There is no fixed recruitment or release schedule.
 
 ## Demo videos
 
-Both videos are silent, speed-edited summaries with captions and red highlights. The files are included under `docs/videos/` in the repository; open their links to view the file page or download them.
+Both videos are silent, speed-edited summaries with captions and red highlights. The same videos are posted as YouTube Shorts, and the files are also included under `docs/videos/` in the repository.
 
 | Video | Demonstrated flow |
 | --- | --- |
-| [Claude Code terminal · 56 seconds](https://github.com/SWJoong/CheckYourProcess/blob/main/docs/videos/shoot-auto-summary.mp4) | Three tasks, 33%, details/language, a second session sharing task IDs, 66%, service restart and explicit resume |
-| [Claude Desktop Code tab · about 45 seconds](https://github.com/SWJoong/CheckYourProcess/blob/main/docs/videos/desktop-code-summary.mp4) | A fresh Code session, five tasks, progress updates, 5/5 at 100%, and ending tracking |
+| Claude Code terminal · 56 seconds<br>[YouTube](https://www.youtube.com/shorts/55RuXNqQ_DI) · [video file](https://github.com/SWJoong/CheckYourProcess/blob/main/docs/videos/shoot-auto-summary.mp4) | Three tasks, 33%, details/language, a second session sharing task IDs, 66%, service restart and explicit resume |
+| Claude Desktop Code tab · about 45 seconds<br>[YouTube](https://www.youtube.com/shorts/22EMteCGKSk) · [video file](https://github.com/SWJoong/CheckYourProcess/blob/main/docs/videos/desktop-code-summary.mp4) | A fresh Code session, five tasks, progress updates, 5/5 at 100%, and ending tracking |
 
 The terminal demo uses Claude Code **2.1.323** in the fullscreen renderer. **Keyboard and mouse inputs were injected by an automation tool**; model responses and tool calls ran in the real host. The Desktop demo uses **Claude Desktop 5.11492's Code tab**, with the sidebar cropped and the account menu masked. It does not demonstrate the general Chat tab's `.mcpb` card. See the [video notes](videos/README.md) and [recording/rehearsal record](demo.md).
 

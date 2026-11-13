@@ -1,0 +1,76 @@
+name: 설치·첫 추적 보고
+description: 내 플랫폼에서 설치부터 첫 추적, 재시작 후 복원까지 해 본 결과를 남깁니다. 잘 된 경우도 환영합니다.
+title: "[설치 보고] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        참여해 주셔서 고맙습니다. 막힌 곳이 있으면 그 지점이 다음 개선 과제가 됩니다. 잘 된 경우도 어떤 환경에서 확인했는지 알려 주세요.
+
+        **인증 URL, 토큰, DB 파일, 개인 로그, 실제 이용자나 사례 정보는 붙이지 마세요.** 스크린샷도 먼저 확인해 주세요. 시험은 임시 `CYP_DATA_DIR`로 하는 것을 권합니다.
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 플랫폼
+      options:
+        - Claude Code (터미널)
+        - Claude Desktop — Code 탭
+        - Claude Desktop — Chat 탭 (.mcpb)
+        - Codex CLI
+        - Codex 앱
+        - ChatGPT
+        - 기타
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: OS와 앱 버전
+      description: 예) Windows 11 / Claude Code 2.1.323 / Node v22.20.0
+    validations:
+      required: true
+  - type: input
+    id: cyp-version
+    attributes:
+      label: CheckYourProcess 버전
+      description: 예) 0.1.0-beta.5
+    validations:
+      required: true
+  - type: textarea
+    id: install
+    attributes:
+      label: 설치 방법과 실패한 단계
+      description: 따라 한 안내 문서와 단계를 적어 주세요. 막히지 않았다면 "막힘 없음"이라고 적어도 됩니다.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 재현 단계
+      description: 번호를 붙여 한 단계씩 적어 주세요.
+  - type: textarea
+    id: expected-actual
+    attributes:
+      label: 기대 결과와 실제 결과
+      description: 오류 메시지는 그대로 붙여 주세요. 토큰이나 URL이 섞여 있지 않은지 먼저 확인합니다.
+    validations:
+      required: true
+  - type: textarea
+    id: lifecycle
+    attributes:
+      label: 첫 추적·진행 갱신·재연결·재시작 복원 결과
+      description: 각각 되었는지, 안 되었는지, 해 보지 않았는지 적어 주세요. 해 보지 않은 항목은 "미확인"이라고 적어 주세요.
+      placeholder: |
+        첫 추적 시작:
+        작업 완료 후 진행률 갱신:
+        연결이 끊긴 뒤 재연결:
+        앱·서비스 재시작 후 복원:
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 개인정보 확인
+      options:
+        - label: 인증 URL·토큰·DB·개인 로그·실제 이용자 정보가 글과 첨부에 없습니다.
+          required: true

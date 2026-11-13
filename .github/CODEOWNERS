@@ -1,0 +1,29 @@
+# 디렉터리별 리뷰 담당자. 아래 줄이 위에서 아래로 읽히며, 나중에 나온 규칙이 앞선 규칙을 덮어씁니다.
+# 한 줄에 담당자를 여러 명 적으면 모두에게 리뷰 요청이 갑니다.
+# 참여자가 정해지면 '#'를 지우고 @GitHub아이디 를 실제 아이디로 바꾸세요.
+# 존재하지 않는 아이디를 적으면 GitHub가 오류로 표시하니, 정해지기 전에는 주석으로 두세요.
+
+# 기본: 모든 파일은 유지 관리자가 리뷰합니다.
+*                              @SWJoong
+
+# 공통 영역 — 모든 플랫폼에 영향. 유지 관리자만 담당합니다.
+/src/store.ts                  @SWJoong
+/src/service.ts                @SWJoong
+/src/types.ts                  @SWJoong
+/src/mcp.ts                    @SWJoong
+/src/runtime.ts                @SWJoong
+/src/i18n.ts                   @SWJoong
+/src/ui/                       @SWJoong
+/integrations/shared/          @SWJoong
+/tests/                        @SWJoong
+/.github/                      @SWJoong
+
+# 플랫폼 담당 — 참여자가 정해지면 유지 관리자와 함께 적으세요.
+# /integrations/claude-code/     @SWJoong @Claude-Code-담당-아이디
+# /integrations/claude-desktop/  @SWJoong @Claude-Desktop-담당-아이디
+# /integrations/codex/           @SWJoong @Codex-담당-아이디
+# /src/stdio.ts                  @SWJoong @ChatGPT-담당-아이디
+
+# 문서 — 번역·문구 담당이 정해지면 추가하세요.
+# /docs/                         @SWJoong @문서-담당-아이디
+# /README.md                     @SWJoong @문서-담당-아이디
