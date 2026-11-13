@@ -1,12 +1,38 @@
-# Install the desktop integrations
+# 설치 안내 / Install the integrations
 
-Build the repository first with Node.js 22.20.0 or later:
+## 먼저 준비하기
+
+Windows와 Node.js **22.20.0 이상**이 필요합니다. 소스 클론에는 Git도 사용합니다. Node 설치 후 터미널·대상 앱을 완전히 다시 열고 다음 명령을 확인하세요.
 
 ```powershell
+node --version
+npm --version
+```
+
+## 릴리스 패키지로 설치하기
+
+[v0.1.0-beta.5 릴리스](https://github.com/SWJoong/CheckYourProcess/releases/tag/v0.1.0-beta.5)의 **Assets**에서 사용할 플랫폼의 ZIP 또는 `.mcpb`를 내려받으세요. ZIP은 안정된 폴더에 압축을 풀고, `.mcpb`는 아래 Claude Desktop 설정에서 설치합니다. 이 경로에는 Git·`npm ci`·소스 빌드가 필요하지 않으며 Node.js는 필요합니다.
+
+아래 안내의 `release/checkyourprocess-…` 파일명은 내려받은 같은 이름의 파일로 대신하면 됩니다. 파일 이름에 **Source code**가 붙은 자동 생성 ZIP은 설치 패키지가 아닙니다. Codex CLI나 ChatGPT 터널을 설정할 때는 압축을 푼 패키지 폴더의 `dist/stdio.js`를 사용합니다.
+
+## 소스에서 빌드하기
+
+직접 개발하거나 로컬 마켓플레이스 파일을 만들려면 소스를 빌드합니다. `release/`는 Git에 포함되지 않는 생성 폴더입니다. 소스 ZIP을 사용했다면 압축을 푼 뒤 `package.json`이 있는 폴더에서 아래의 `npm ci`부터 실행하세요.
+
+```powershell
+git clone https://github.com/SWJoong/CheckYourProcess.git
+cd CheckYourProcess
 npm ci
-npm run build
 npm run package
 ```
+
+각 명령이 성공한 뒤 다음 명령을 실행하세요. `npm run package`는 빌드와 세 설치 파일 생성을 함께 수행합니다. `npm.ps1` 실행 정책 오류가 나면 같은 명령을 `npm.cmd ci`, `npm.cmd run package`로 실행할 수 있습니다. `node`를 찾을 수 없다면 Node 설치·PATH와 앱 재시작을 확인하세요.
+
+사용할 플랫폼 하나만 선택하면 됩니다. 세부 안내: [Claude Code](#claude-code) · [Codex CLI](#codex-cli) · [Codex 앱](#codex-desktop-app) · [Claude Desktop Chat](#claude-desktop-chat) · [ChatGPT](#chatgpt-with-a-private-mcp-tunnel).
+
+설치 후에는 새 대화에서 추적을 시작하고 세 작업을 등록해 `0/3 → 1/3 (33%)` 갱신을 확인하세요. 마지막으로 앱을 다시 열고 기존 추적 ID를 명시적으로 재개해 저장 상태가 유지되는지 확인합니다. [베타 확인 항목](beta.md)의 기본 동작이 통과한 다음 추가 기능을 시험합니다.
+
+## Common runtime and updates
 
 Each archive contains the bundled local runtime, so its installed copy does not need `npm install`. Node itself must still be available to the desktop host. Keep all copies on the same `CYP_DATA_DIR` and `CYP_PORT` if overriding the defaults.
 
@@ -14,19 +40,64 @@ The default shared data directory is `%USERPROFILE%/.checkyourprocess`. When upg
 
 ## Claude Code
 
-Use a current Claude Code version with mods support. The native `AbovePrompt` site is documented from 2.1.290; development verification targets 2.1.319. Native bands are supported in the terminal and Claude Code's Desktop surface, not the general Claude Desktop Chat tab.
+Use a Claude Code version with mods support. The native `AbovePrompt` site is documented from 2.1.290; native band tests were run with **2.1.322 and 2.1.323**. Native bands are supported in the terminal and Claude Code's Desktop surface, not the general Claude Desktop Chat tab.
 
 1. Extract `release/checkyourprocess-claude-code-0.1.0-beta.5.zip` into a stable folder such as `plugins/checkyourprocess`.
 2. For a session-scoped local test, run `claude --plugin-dir ./plugins/checkyourprocess` from your working folder. The path must point at the extracted folder containing `.claude-plugin/plugin.json`.
-3. For a persistent install, add the generated `release/claude-marketplace.json` through `/plugin marketplace add` or `claude plugin marketplace add`, then install `checkyourprocess@checkyourprocess-local`. Keep its staged source directory in place, or replace the source path with your extracted stable plugin directory.
+3. For a persistent install **from a source build**, add the generated `release/claude-marketplace.json` through `/plugin marketplace add` or `claude plugin marketplace add`, then install `checkyourprocess@checkyourprocess-local`. Keep its staged source directory in place, or replace the source path with your extracted stable plugin directory. The release ZIP alone does not include this generated marketplace file; the session-scoped launch works with the extracted ZIP.
 4. Review the plugin's local process, network and hook permissions. Restart the host after installation.
 5. Run `/checkyourprocess:track` or click **Start tracking / 추적 시작**. The SessionStart hook supplies the native session ID; the tracking tool binds its separate tracker ID to that native session.
 
+For the session-scoped source-build path above, the launch command is:
+
+```powershell
+claude --plugin-dir ./plugins/checkyourprocess
+```
+
+The extracted folder must directly contain `.claude-plugin/plugin.json`, `.mcp.json`, `dist/` and `hooks/`. If your archive tool added another directory layer, point to the inner folder. Keep this folder in place. For persistent installation from this source build, the generated marketplace can be registered with:
+
+```powershell
+claude plugin marketplace add ./release/claude-marketplace.json
+claude plugin install checkyourprocess@checkyourprocess-local
+```
+
+Run these from the built repository and retain its staged directory under `release/`. They register a local marketplace, not the GitHub repository as a prebuilt plugin. Starting with `claude --plugin-dir` is sufficient for the first test; choose a single installation path to avoid loading duplicate copies.
+
 The band provides a details toggle, session/project scope and Korean/English language buttons. The details view pages through all tasks, connects a standalone session to an existing project, and links project tasks that this session is missing. beta.5 ships the Claude Code plugin without the in-chat card (`CYP_CARD=off` in its `.mcp.json`), so there is no full card to open; register new tasks from the chat. Other plugins sharing the same AbovePrompt site are preserved beneath this band.
+
+**Claude Code 2.1.323에서 확인한 표시 조건:** 기본 터미널 렌더러에서는 바가 보여도 상세·언어 버튼의 마우스 클릭이 반응하지 않았습니다. 이 버전의 촬영·리허설은 다음처럼 전체 화면 렌더러로 실행해 버튼을 확인했습니다. 환경변수는 현재 PowerShell에서 새로 여는 Claude Code에 적용됩니다.
+
+```powershell
+$env:CLAUDE_CODE_NO_FLICKER = '1'
+claude --plugin-dir ./plugins/checkyourprocess
+```
+
+이는 확인한 버전의 우회 방법이며 모든 Claude Code 버전의 조건으로 단정하지 않습니다. 창을 닫으면 해당 셸에만 설정한 환경변수도 끝납니다. 확인한 버튼과 남은 범위는 [촬영 기록](demo.md)을 참고하세요.
 
 Reference: [Claude mods](https://code.claude.com/docs/en/plugins/mods/reference).
 
-## Codex
+## Codex CLI
+
+가장 작은 시작 경로는 빌드한 stdio MCP 서버만 등록하는 것입니다. `package.json`이 있는 빌드 폴더에서 실행하세요. 서버 등록은 Codex의 로컬 설정을 변경합니다. 이미 `checkyourprocess` 플러그인이 활성화되어 있다면 이중 등록하지 마세요.
+
+```powershell
+$cypStdio = (Resolve-Path ./dist/stdio.js).Path
+codex mcp add checkyourprocess -- node "$cypStdio"
+codex mcp list
+codex
+```
+
+Codex CLI **0.167.1**의 로컬 도움말로 위 등록 명령 형식을 확인했습니다. 새 세션에서 `checkyourprocess` 도구를 확인하고 다음처럼 요청합니다.
+
+> CheckYourProcess로 이 세션의 추적을 시작하고 구현·검증·리뷰를 등록해 주세요. 각 단계의 시작과 완료, 실행·대기 상태를 도구로 보고하고 현재 진행률을 보여 주세요.
+
+이 방식은 MCP 서버만 등록합니다. 플러그인의 스킬·활동 훅을 함께 설치하지 않으므로 **명시적 도구 보고**를 사용합니다. CLI에 카드나 고정 바가 뜬다고 가정하지 않습니다. 도구 응답 또는 별도 터미널의 `node dist/cli.js preview`로 상태를 확인하세요. 등록한 절대 경로를 계속 사용하므로 빌드 폴더를 옮기면 등록 경로도 갱신해야 합니다.
+
+플러그인·훅 경로를 개선할 때는 `integrations/codex/`를 사용합니다. 현재 CLI에는 `codex plugin` 명령도 있지만, 플러그인 설치·훅·실제 화면은 아래 앱 경로와 별도로 검증해야 합니다. 직접 등록한 MCP 서버 제거는 `codex mcp remove checkyourprocess`이며, 데이터는 보존됩니다.
+
+The minimal CLI path adds only the stdio MCP server. It provides explicit progress tools, without installing plugin skills/hooks or promising a rendered MCP App card. The Codex desktop plugin path below is separate.
+
+## Codex desktop app
 
 1. Extract `release/checkyourprocess-codex-0.1.0-beta.5.zip` into `plugins/checkyourprocess` inside the repository where you want to make it available.
 2. Add the entry below to that repository's `.agents/plugins/marketplace.json`. If the file already exists, merge its `plugins` array rather than replacing it.
@@ -50,7 +121,7 @@ Reference: [Claude mods](https://code.claude.com/docs/en/plugins/mods/reference)
 
 The generated `release/codex-marketplace.json` is a template for the staged package. Codex resolves `source.path` relative to the marketplace root, not the `.agents/plugins/` subdirectory. A personal marketplace is also possible; see the [official packaging guide](https://developers.openai.com/plugins/build/plugins).
 
-This plugin uses lifecycle hooks for activity only. It does not attach an unsupported fixed bar to Codex's composer, read Codex's private transcripts, or require direct access to the desktop app-server daemon.
+The plugin includes lifecycle hooks and a shared relay for supported activity/plan events; actual event payloads require host-specific verification. It does not attach an unsupported fixed bar to Codex's composer, read Codex's private transcripts, or require direct access to the desktop app-server daemon.
 
 ## Claude Desktop Chat
 
@@ -67,7 +138,9 @@ Reference: [local desktop extensions](https://support.claude.com/en/articles/109
 
 ## ChatGPT with a private MCP tunnel
 
-Use the local desktop plugin path if your ChatGPT local execution surface supports it. For ChatGPT's cloud-connected Chat surface, use the official Secure MCP Tunnel so the database can stay on the PC.
+ChatGPT는 로컬 플러그인 ZIP이나 `.mcpb`를 직접 설치하는 경로와 다릅니다. 먼저 위 로컬 빌드·미리보기를 확인한 뒤 계정의 커스텀 MCP 권한과 터널 사용 권한을 확인하세요. 가입 상품만으로 연결 가능 여부를 판단하지 않습니다.
+
+For ChatGPT's cloud-connected Chat surface, use the official Secure MCP Tunnel so the database can stay on the PC.
 
 1. Confirm the ChatGPT account/workspace permits custom MCP connections and the associated Platform organization grants tunnel creation/use. A ChatGPT subscription alone does not establish those permissions.
 2. Build the project. Install `tunnel-client` from the download linked by the [official Secure MCP Tunnel guide](https://developers.openai.com/api/docs/guides/secure-mcp-tunnels).

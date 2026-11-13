@@ -26,7 +26,7 @@ Claude Code 플러그인은 `.mcp.json`의 `CYP_CARD=off`로 MCP App 카드를 �
 
 ## 훅 입력 필드 진단 로그 (선택)
 
-서브에이전트 같은 병렬 작업 정보가 훅으로 전달되는지 확인할 때만 사용합니다. 데이터 디렉터리에 빈 파일 `debug-hook-keys.enabled`를 만들면 `debug-hook-keys.log`에 훅 입력의 **필드 이름과 값의 종류**만 기록합니다. 값을 남기는 필드는 `hook_event_name`, `tool_name`, `agent_id`, `agent_type`, `subagent_type`, `parent_agent_id`, `permission_mode`뿐이며 프롬프트·명령·파일 경로·transcript와 도구 입력·결과의 값은 기록하지 않습니다. 도구 입력(`tool_input`)과 결과(`tool_response`)는 **필드 이름만** 최대 4단계까지 남기며, 배열은 길이와 앞 3개 항목의 필드 이름만 기록합니다. `SubagentStart`/`SubagentStop` 훅은 이 로그에만 쓰이고 추적 상태에는 반영하지 않습니다. 로그가 2MB를 넘으면 기록을 멈춥니다.
+서브에이전트 같은 병렬 작업 정보가 훅으로 전달되는지 확인할 때만 사용합니다. 데이터 디렉터리에 빈 파일 `debug-hook-keys.enabled`를 만들면 `debug-hook-keys.log`에 훅 입력의 **필드 이름과 값의 종류**만 기록합니다. 값을 남기는 필드는 `hook_event_name`, `tool_name`, `agent_id`, `agent_type`, `subagent_type`, `parent_agent_id`, `permission_mode`뿐이며 프롬프트·명령·파일 경로·transcript와 도구 입력·결과의 값은 기록하지 않습니다. 도구 입력(`tool_input`)과 결과(`tool_response`)는 **필드 이름만** 최대 4단계까지 남기며, 배열은 길이와 앞 3개 항목의 필드 이름만 기록합니다. `SubagentStart`/`SubagentStop` 훅은 진단 로그와 별개로 추적에 연결된 세션의 서브 에이전트 수에도 반영합니다. 로그가 2MB를 넘으면 기록을 멈춥니다.
 
 ```powershell
 New-Item "$env:USERPROFILE\.checkyourprocess\debug-hook-keys.enabled" -ItemType File

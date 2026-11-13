@@ -1,0 +1,18 @@
+[CheckYourProcess] 같이 만들어 보실래요? 🙂
+
+울트라코드로 서브에이전트에게 일을 맡겨 두면 어디까지 진행됐는지 감이 안 와서 만들었어요. AI와 합의한 작업 목록, 완료 수, 실행·대기 상태를 작은 진행 바로 보여 줍니다.
+
+지금은 Windows 한 대에서 쓰는 beta.5예요. 설치부터 첫 추적, 상태 갱신, 재시작 후 복원까지 매끄럽게 다듬는 중입니다. 여러 PC 사이에 진행률을 동기화하는 서비스는 아니에요.
+
+평소 쓰시는 ChatGPT / Claude Desktop / Claude Code / Codex CLI 중 하나로 함께 개선해 보실 분을 찾고 있어요. 설치해 보기, 막힌 곳 알려 주기, 문서 고치기처럼 작은 참여도 반가워요. 관심 플랫폼과 사용 환경을 GitHub 이슈에 남겨 주세요.
+
+GitHub · 소개·설치·참여 안내
+https://github.com/SWJoong/CheckYourProcess
+
+■ 터미널 시연 · 56초
+작업 등록부터 두 세션의 기존 작업 공유, 서비스 재시작 후 66% 복원까지 담았어요. 키·마우스 입력은 자동화 도구로 주입했고, 실제 Claude Code의 응답·도구 호출을 배속으로 요약했어요. 소리는 없습니다.
+https://github.com/SWJoong/CheckYourProcess/blob/main/docs/videos/shoot-auto-summary.mp4
+
+■ Claude Desktop Code 탭 시연 · 약 45초
+작업 5개를 등록하고 진행 바가 100%가 될 때까지 보여 줘요. 배속·사이드바 자르기·계정 메뉴 가림 처리를 했고 소리는 없습니다. 일반 Chat 탭의 카드를 시연한 영상은 아니에요.
+https://github.com/SWJoong/CheckYourProcess/blob/main/docs/videos/desktop-code-summary.mp4

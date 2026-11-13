@@ -1,0 +1,9 @@
+# README cover
+
+`cover.png` is an introductory illustration, not a screenshot or compatibility claim. Generated on 2026-11-13 with the built-in image generation tool; the selected output is stored in this repository. Existing `progress-band.png` and `project-details.png` show the local preview with test data.
+
+Final generation prompt:
+
+```text
+Use case: ads-marketing. Asset type: wide GitHub README cover illustration for the independent open-source beta project CheckYourProcess. Generate a polished original 16:9 landscape raster pixel-art illustration, 1536px wide or similar. Primary request: communicate local progress tracking across parallel AI tasks. Scene: a quiet black digital workspace, with four small abstract terminal/work panels arranged as a careful, spacious editorial composition, crisp white pixel borders, each panel containing a few simple task checkboxes and segmented progress blocks. The panels connect through subtle square-pixel paths into one large shared progress bar near the lower third. Fill exactly three of five segments to convey visible shared task progress. Add restrained one-bit dithering and a few pixel-like depth cues to make this a finished cover illustration, not a wireframe. Style: monochrome black and warm white only, high-contrast 8-bit software aesthetic, squared corners, precise spacing, confident minimal editorial art, no glossy effects or gradients. Typography: large, highly legible title exactly "CheckYourProcess", and a small "BETA" label; these are the only text. Keep the title prominent with generous space and safe margins. Constraints: illustration, not a screenshot; no real app windows or menus, no vendor logos, no third-party branding, no humans, no robots, no invented feature claims, no additional captions, no watermark. Opaque black background.
+```

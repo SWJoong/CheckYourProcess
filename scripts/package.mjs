@@ -66,8 +66,9 @@ for (const host of ['claude-code', 'codex', 'claude-desktop']) {
   const target = join(stage, host);
   await copy(join(root, 'integrations', host), target);
   await copy(join(root, 'dist'), join(target, 'dist'));
-  for (const file of ['README.md', 'LICENSE']) await copy(join(root, file), join(target, file));
-  await copy(join(root, 'docs'), join(target, 'docs'));
+  for (const file of ['README.md', 'CONTRIBUTING.md', 'SECURITY.md', 'LICENSE']) await copy(join(root, file), join(target, file));
+  // Installed docs link to GitHub so demo footage is not bundled into every host package.
+  await cp(join(root, 'docs'), join(target, 'docs'), { recursive: true, filter: source => !source.endsWith('.mp4') });
   await writeFile(join(target, 'package.json'), `${JSON.stringify(runtimePackage, null, 2)}\n`);
   if (host !== 'claude-desktop') {
     await copy(join(root, 'integrations/shared/relay.mjs'), join(target, 'hooks/relay.mjs'));

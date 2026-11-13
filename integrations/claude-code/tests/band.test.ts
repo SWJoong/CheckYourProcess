@@ -195,13 +195,20 @@ test('project view links only the tasks this session is missing', async ($, on) 
   await ui.unmount();
 });
 
-test('running sub-agents are counted beside the activity and hidden at zero', async ($, on) => {
+test('running sub-agents render on terminal and desktop in both languages', async ($, on) => {
   mock.clock(on);
   stubService(on, () => true, { ...snapshot, session: { ...snapshot.session, activeAgents: 2 } });
   await $.session.start({ surface: 'terminal', isInteractive: true, cwd: '/work' });
-  const ui = await $.ui.mount({ plugin: 'checkyourprocess', surface: 'terminal', ...BAND });
-  expect(await ui.find({ type: 'Text', text: /^2 sub-agent\(s\)$/ })).toBeDefined();
-  await ui.unmount();
+  for (const surface of ['terminal', 'desktop'] as const) {
+    const ui = await $.ui.mount({ plugin: 'checkyourprocess', surface, ...BAND });
+    expect(await ui.find({ type: 'Text', text: /^2 sub-agent\(s\)$/ })).toBeDefined();
+    await ui.press({ key: 'checkyourprocess:details' });
+    await ui.press({ key: 'checkyourprocess:locale-ko' });
+    expect(await ui.find({ type: 'Text', text: /^서브 2개 실행$/ })).toBeDefined();
+    await ui.press({ key: 'checkyourprocess:locale-en' });
+    await ui.press({ key: 'checkyourprocess:details' });
+    await ui.unmount();
+  }
 });
 
 test('no sub-agent text appears when none are running', async ($, on) => {

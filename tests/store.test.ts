@@ -325,8 +325,8 @@ test('a foreground sub-agent still ends at its stop, and a restart after its rep
     const count = () => (call('get_snapshot', { trackingSessionId: s.trackingSessionId }) as Snapshot).session.activeAgents;
     hook('prompt');
     hook('subagent-start', { agentId: 'f1' });
-    hook('tool-end', { toolUseId: 'sync', toolName: undefined });
     hook('subagent-stop', { agentId: 'f1' });
+    hook('tool-end', { toolUseId: 'sync' });
     assert.equal(count(), 0, 'without a background launch there is no pause to wait out');
 
     hook('subagent-start', { agentId: 'b2' });
@@ -336,6 +336,64 @@ test('a foreground sub-agent still ends at its stop, and a restart after its rep
     hook('subagent-stop', { agentId: 'b2' });
     assert.equal(count(), 1, 'a restart reopens the report, so the next stop is only a pause');
   } finally { store.close(); }
+});
+
+test('overlapping foreground agents stop before their parent tool returns, without completing tasks', () => {
+  const { store, call, start } = setup();
+  try {
+    const s = start({ host: 'claude-code', hostSessionId: 'agents-overlap' });
+    call('register_tasks', { trackingSessionId: s.trackingSessionId, titles: ['Review results'] });
+    const hook = hooks(store, 'agents-overlap');
+    const snap = () => call('get_snapshot', { trackingSessionId: s.trackingSessionId }) as Snapshot;
+    hook('prompt');
+    hook('tool-start', { toolUseId: 'launch-a' });
+    hook('subagent-start', { agentId: 'a' });
+    hook('tool-start', { toolUseId: 'launch-b' });
+    hook('subagent-start', { agentId: 'b' });
+    assert.equal(snap().session.activeAgents, 2);
+    hook('tool-start', { toolUseId: 'read-a', agentId: 'a' });
+    hook('tool-start', { toolUseId: 'read-b', agentId: 'b' });
+    hook('tool-end', { toolUseId: 'read-a', agentId: 'a' });
+    hook('tool-end', { toolUseId: 'read-b', agentId: 'b' });
+    hook('subagent-stop', { agentId: 'a' });
+    hook('tool-end', { toolUseId: 'launch-a' });
+    assert.equal(snap().session.activeAgents, 1);
+    hook('subagent-stop', { agentId: 'b' });
+    hook('tool-end', { toolUseId: 'launch-b' });
+    assert.equal(snap().session.activeAgents, 0);
+    assert.equal(snap().session.activity, 'running', 'the parent still needs to review the results');
+    hook('stop');
+    assert.equal(snap().session.activity, 'waiting');
+    assert.equal(snap().tasks[0].status, 'pending');
+  } finally { store.close(); }
+});
+
+test('late hooks after interruption or session end stay ignored until the next prompt', () => {
+  for (const finish of ['interrupt', 'session-end']) {
+    const { store, call, start } = setup();
+    try {
+      const s = start({ host: 'claude-code', hostSessionId: 'agents-late' });
+      call('register_tasks', { trackingSessionId: s.trackingSessionId, titles: ['Unfinished'] });
+      const hook = hooks(store, 'agents-late');
+      const snap = () => call('get_snapshot', { trackingSessionId: s.trackingSessionId }) as Snapshot;
+      hook('prompt');
+      hook('subagent-start', { agentId: 'old' });
+      hook(finish);
+      const stopped = snap();
+      assert.deepEqual(hook('subagent-start', { agentId: 'late' }), { ignored: true });
+      assert.deepEqual(hook('tool-start', { agentId: 'late', toolUseId: 'late-read' }), { ignored: true });
+      assert.deepEqual(hook('tool-end', { toolUseId: 'late-launch', asyncAgentId: 'old' }), { ignored: true });
+      assert.deepEqual(hook('tool-end', { toolUseId: 'late-plan', planItems: [{ content: 'Unfinished', status: 'completed' }] }), { ignored: true });
+      assert.deepEqual(hook('subagent-stop', { agentId: 'old' }), { ignored: true });
+      assert.deepEqual(hook('stop'), { ignored: true });
+      assert.deepEqual(snap().session, stopped.session);
+      assert.equal(snap().tasks[0].status, 'pending');
+      hook('prompt');
+      hook('subagent-start', { agentId: 'new' });
+      assert.equal(snap().session.activity, 'running');
+      assert.equal(snap().session.activeAgents, 1);
+    } finally { store.close(); }
+  }
 });
 
 test('a silent background sub-agent stops counting after the silence window, and activity keeps it alive', () => {

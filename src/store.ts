@@ -300,11 +300,13 @@ export class TrackerStore {
       if (!bound) return { ignored: true };
       const session = this.session(bound.session_id);
       if (session.endedAt) return { ignored: true };
+      let turnActive = Boolean(this.one('SELECT turn_active FROM sessions WHERE id=?', session.id)!.turn_active);
+      // Delayed hooks after interruption or session end belong to the old turn until a new prompt arrives.
+      if (!turnActive && session.activity === 'interrupted' && event !== 'prompt') return { ignored: true };
       const key = `${host}:${hostSessionId}:${eventId}`;
       if (this.one('SELECT 1 FROM hook_events WHERE id=?', key)) return { duplicate: true };
       this.run('INSERT INTO hook_events(id) VALUES(?)', key);
       let activity: Activity = 'running';
-      let turnActive = Boolean(this.one('SELECT turn_active FROM sessions WHERE id=?', session.id)!.turn_active);
       const toolId = input.toolUseId ? text(input.toolUseId, 'toolUseId') : null;
       const seenAt = this.now();
       if (event === 'subagent-stop') {

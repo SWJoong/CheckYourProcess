@@ -26,10 +26,12 @@ The card talks through the MCP host bridge; it never receives the service's bear
 
 User task updates enter through the common tools. Coding-host hooks report lifecycle observations and only affect trackers bound by an opt-in `start_tracking`/`resume_tracking` call. Existing chat transcripts are not imported or parsed.
 
-Two hook inputs go beyond activity, both only to the local service and only for bound trackers:
+Two hook inputs go beyond activity. The relay sends them only to the local service; the service checks the binding before storing anything, so unbound trackers are ignored:
 
 - **Plan lists.** When a plan tool (`update_plan`, `TodoWrite`) finishes, the relay forwards only each item's text and status. The service mirrors them into the session's tasks: new items add work, an equal title inside the same session reuses its task, and a plan can only move a task forward (it never reopens a completed task or removes a task). Plans raised inside a sub-agent are ignored so they cannot move the parent's total. No other tool input leaves the relay.
 - **Sub-agents.** `SubagentStart` and `SubagentStop` keep a per-session set of running sub-agents. A parent `Stop` keeps the session `running` while that set is not empty. A stop without a recorded start (host-internal helpers) is ignored. A background sub-agent (flagged by the parent's `Agent` tool-end) only pauses at `SubagentStop` while it waits on its own commands; it leaves the set at the stop that follows its final report (`SubagentHandback`). One silent for 30 minutes stops being counted. Interrupting or ending a session clears the set. Only the sub-agent ID and these two flags leave the relay.
+
+After an interruption or native `SessionEnd`, delayed hooks are ignored until the next prompt, so they cannot recreate sub-agents, reopen activity, or apply an old plan. `end_tracking` separately requires an explicit resume. A delayed event arriving after a new prompt cannot be assigned to its original turn because hook inputs have no turn ID. Foreground and overlapping foreground event order was observed on Claude Code 2.1.322; see [the verification record](design-auto-progress.md).
 
 ## Interfaces
 
