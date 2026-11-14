@@ -89,6 +89,8 @@ This beta uses one local database on one PC. Cross-PC collaboration, macOS/Linux
 
 Contributors can focus on **ChatGPT, Claude Desktop, Claude Code or Codex CLI**. Installation reports, documentation and small fixes are welcome. Open a [GitHub issue](https://github.com/SWJoong/CheckYourProcess/issues) with your platform/version, the problem and the scope you can take on. See [Contributing](../CONTRIBUTING.md) for starter tasks and shared invariants.
 
+A [one-page guide (HTML, Korean)](guide.html) covers the architecture, usage and how the work is divided. GitHub shows it as source code, so download the file and open it in a browser.
+
 ### How parts are shared
 
 The default is one platform per person. Rather than new features, the suggested first task is **to run install → first tracked task → restart recovery on your own platform and record the result**; whatever blocks you becomes the next improvement task.
