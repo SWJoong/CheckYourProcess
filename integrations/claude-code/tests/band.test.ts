@@ -157,6 +157,22 @@ test('details page through every task instead of truncating, so no full card is 
   await ui.unmount();
 });
 
+test('a short band pages fewer tasks and drops the spacing so details fit without scrolling', async ($, on) => {
+  mock.clock(on);
+  stubService(on, () => true, { ...snapshot, tasks: manyTasks, progress: { completed: 2, total: 6, percent: 33 } });
+  await $.session.start({ surface: 'terminal', isInteractive: true, cwd: '/work' });
+  const ui = await $.ui.mount({ plugin: 'checkyourprocess', surface: 'terminal', ...BAND, props: { ...BAND.props, maxRows: 10, scroll: { offset: 0, bodyRows: 9 } } });
+  expect((await ui.find({ key: 'checkyourprocess:panel' }))?.props.marginY).toBe(1);
+  await ui.press({ key: 'checkyourprocess:details' });
+  expect((await ui.find({ key: 'checkyourprocess:panel' }))?.props.marginY).toBe(0);
+  expect(await ui.find({ type: 'Text', text: /Step 2$/ })).toBeDefined();
+  expect(await ui.find({ type: 'Text', text: /Step 3$/ })).toBeUndefined();
+  expect(await ui.find({ type: 'Text', text: /^1\/3$/ })).toBeDefined();
+  await ui.press({ key: 'checkyourprocess:page-next' });
+  expect(await ui.find({ type: 'Text', text: /Step 3$/ })).toBeDefined();
+  await ui.unmount();
+});
+
 test('a standalone session can connect to an existing project from the details view', async ($, on) => {
   mock.clock(on);
   const requests = stubService(on, () => true, { ...snapshot, project: null }, [{ id: 'project-9', name: 'Shared experiment', createdAt: '2026-11-12T00:00:00Z' }]);
