@@ -44,7 +44,7 @@ Use a Claude Code version with mods support. The native `AbovePrompt` site is do
 
 1. Extract `release/checkyourprocess-claude-code-0.1.0-beta.5.zip` into a stable folder such as `plugins/checkyourprocess`.
 2. For a session-scoped local test, run `claude --plugin-dir ./plugins/checkyourprocess` from your working folder. The path must point at the extracted folder containing `.claude-plugin/plugin.json`.
-3. For a persistent install **from a source build**, add the generated `release/claude-marketplace.json` through `/plugin marketplace add` or `claude plugin marketplace add`, then install `checkyourprocess@checkyourprocess-local`. Keep its staged source directory in place, or replace the source path with your extracted stable plugin directory. The release ZIP alone does not include this generated marketplace file; the session-scoped launch works with the extracted ZIP.
+3. For a persistent install, register a local marketplace **folder** with `claude plugin marketplace add`, then install `checkyourprocess@checkyourprocess-local`. A source build generates `release/.claude-plugin/marketplace.json`; for the release ZIP, create that file yourself next to the extracted folder, as shown below. Pass the folder, not the JSON file.
 4. Review the plugin's local process, network and hook permissions. Restart the host after installation.
 5. Run `/checkyourprocess:track` or click **Start tracking / 추적 시작**. The SessionStart hook supplies the native session ID; the tracking tool binds its separate tracker ID to that native session.
 
@@ -54,14 +54,35 @@ For the session-scoped source-build path above, the launch command is:
 claude --plugin-dir ./plugins/checkyourprocess
 ```
 
-The extracted folder must directly contain `.claude-plugin/plugin.json`, `.mcp.json`, `dist/` and `hooks/`. If your archive tool added another directory layer, point to the inner folder. Keep this folder in place. For persistent installation from this source build, the generated marketplace can be registered with:
+The extracted folder must directly contain `.claude-plugin/plugin.json`, `.mcp.json`, `dist/` and `hooks/`. If your archive tool added another directory layer, point to the inner folder. Keep this folder in place.
+
+For a persistent install from the release ZIP, keep the extracted folder at `plugins/checkyourprocess` and create `plugins/.claude-plugin/marketplace.json`:
+
+```json
+{
+  "name": "checkyourprocess-local",
+  "owner": { "name": "CheckYourProcess" },
+  "plugins": [
+    { "name": "checkyourprocess", "source": "./checkyourprocess", "description": "Opt-in progress bands for parallel AI projects", "version": "0.1.0-beta.5" }
+  ]
+}
+```
+
+Then register the `plugins` folder from its parent folder:
 
 ```powershell
-claude plugin marketplace add ./release/claude-marketplace.json
+claude plugin marketplace add ./plugins
 claude plugin install checkyourprocess@checkyourprocess-local
 ```
 
-Run these from the built repository and retain its staged directory under `release/`. They register a local marketplace, not the GitHub repository as a prebuilt plugin. Starting with `claude --plugin-dir` is sufficient for the first test; choose a single installation path to avoid loading duplicate copies.
+From a source build, register the generated `release` folder instead. Run these from the built repository and keep its staged directory under `release/`:
+
+```powershell
+claude plugin marketplace add ./release
+claude plugin install checkyourprocess@checkyourprocess-local
+```
+
+`source` is resolved relative to the registered folder. Both register a local marketplace, not the GitHub repository as a prebuilt plugin. Earlier instructions passed `./release/claude-marketplace.json`; with Claude Code 2.1.326 that file path resolved `source` from the repository root and the marketplace failed to load. The folder paths above were verified with 2.1.326 on Linux. Starting with `claude --plugin-dir` is sufficient for the first test; choose a single installation path to avoid loading duplicate copies.
 
 The band provides a details toggle, session/project scope and Korean/English language buttons. The details view pages through all tasks, connects a standalone session to an existing project, and links project tasks that this session is missing. beta.5 ships the Claude Code plugin without the in-chat card (`CYP_CARD=off` in its `.mcp.json`), so there is no full card to open; register new tasks from the chat. Other plugins sharing the same AbovePrompt site are preserved beneath this band.
 

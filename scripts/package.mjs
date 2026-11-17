@@ -84,5 +84,7 @@ for (const host of ['claude-code', 'codex', 'claude-desktop']) {
 const codexMarketplace = { name: 'checkyourprocess-local', interface: { displayName: 'CheckYourProcess local' }, plugins: [{ name: 'checkyourprocess', source: { source: 'local', path: `./${relative(release, join(stage, 'codex')).replaceAll('\\', '/')}` }, policy: { installation: 'AVAILABLE', authentication: 'ON_INSTALL' }, category: 'Productivity' }] };
 const claudeMarketplace = { name: 'checkyourprocess-local', owner: { name: 'CheckYourProcess' }, plugins: [{ name: 'checkyourprocess', source: `./${relative(release, join(stage, 'claude-code')).replaceAll('\\', '/')}`, description: 'Opt-in progress bands for parallel AI projects', version }] };
 await writeFile(join(release, 'codex-marketplace.json'), `${JSON.stringify(codexMarketplace, null, 2)}\n`);
-await writeFile(join(release, 'claude-marketplace.json'), `${JSON.stringify(claudeMarketplace, null, 2)}\n`);
+// Claude Code adds a marketplace by folder; a bare JSON file path fails to load and resolves sources from the wrong root.
+await mkdir(join(release, '.claude-plugin'), { recursive: true });
+await writeFile(join(release, '.claude-plugin', 'marketplace.json'), `${JSON.stringify(claudeMarketplace, null, 2)}\n`);
 process.stdout.write(`Staged packages: ${relative(root, stage)}\n`);
