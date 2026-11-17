@@ -65,6 +65,60 @@ Version: **0.1.0-beta.5**. Windows + Node.js 22.20.0 이상이 필요합니다.
 
 **확인하지 않은 것:** 다른 Claude Code 버전, 상세 화면 안의 나머지 버튼(페이지 넘김·범위·언어·프로젝트 연결·다시 시도), 바 화면에서 `실행 중` 표시가 나타나는지, 서비스 중지 시점이 직접 `stop`이었는지(확인 시 이미 중지돼 있었고 원인은 모름).
 
+## Linux 설치·작동 점검 — 2026-11-17
+
+환경: Ubuntu(x86_64), Node.js **22.23.2**, npm **10.9.8**, CheckYourProcess **0.1.0-beta.5**. 지원 대상(Windows) 밖의 첫 점검입니다. [베타 릴리스](https://github.com/SWJoong/CheckYourProcess/releases/tag/v0.1.0-beta.5)에서 받은 Claude Code ZIP과 Desktop `.mcpb`를 썼고, 기본 데이터 폴더(`~/.checkyourprocess`)와 기본 포트(49173)를 그대로 썼습니다. 화면 확인은 사용자가, 서비스 상태는 도구 응답으로 확인했습니다.
+
+소스 빌드도 같은 PC에서 확인했습니다. `npm ci`, `npm test` **49/49 통과**, `npm run package` 통과. `npm run typecheck`와 `claude plugin test`는 실행하지 않았습니다.
+
+### 설치
+
+| 항목 | 결과 |
+| --- | --- |
+| 릴리스 ZIP 압축 해제 | 문서의 폴더 구조와 같음. `claude plugin validate` 통과(README에 마켓플레이스 설치 줄이 없다는 조언만 나옴) |
+| 릴리스 ZIP만으로 영구 설치 | **문서대로는 안 됨.** `--plugin-dir`은 터미널 전용이고, 마켓플레이스 파일은 소스 빌드에서만 생김. 압축 푼 폴더를 마켓플레이스로 추가하면 `marketplace.json`이 없다고 실패 |
+| 소스 빌드의 `claude plugin marketplace add ./release/claude-marketplace.json` | **Claude Code 2.1.326에서 실패.** 상대 경로 `source`를 `release/`가 아니라 저장소 루트 기준으로 찾음(`Source path does not exist`). 경로를 고쳐도 파일형 마켓플레이스가 로드되지 않음(`EISDIR`, `cache-miss`) |
+| 우회 | 폴더에 `.claude-plugin/marketplace.json`을 두고(`source`는 그 폴더 기준 상대 경로) `claude plugin marketplace add <폴더>` → 설치·활성 성공 |
+
+### Claude Code 터미널 (2.1.326, 기본 렌더러)
+
+GNOME 계열 터미널, `CLAUDE_CODE_NO_FLICKER` 없음.
+
+| 항목 | 결과 |
+| --- | --- |
+| 설치 후 새 세션 | 바가 바로 뜸(`추적 시작을 요청하세요 · 추적 시작`) |
+| 추적 시작 → 작업 3개 등록 → 1개 완료 | `0/3` → `1/3 (33%)`. 훅으로 네이티브 세션 연결, 활동 출처 `hook` |
+| 두 번째 세션이 기존 프로젝트 ID로 참여·작업 연결 | 작업 3개에 두 세션이 연결되고 총 작업 수 3 유지. 두 탭 모두 `1/3 (33%)` |
+| 상세 버튼 | **기본 렌더러에서 마우스 클릭으로 열림.** Windows 2.1.323의 클릭 무반응은 이 조건에서 재현되지 않음 |
+| 언어·범위 버튼 | 둘 다 동작. 언어를 바꾸면 다른 탭의 바도 함께 바뀜 |
+| 연결 끊김 | 서비스 `stop` 동안 두 탭에 `끊김` 표시, 마지막 값 33% 유지 |
+| 복구 | 서비스를 다시 시작하자 다시 시도 버튼 없이 자동 복구 |
+| 탭 닫기 | 두 탭을 닫자 두 추적이 자동으로 종료됨. 작업 상태는 변하지 않음 |
+| 서비스 재시작 후 `resume_tracking` | `1/3 (33%)`, 작업 revision, 언어 `en` 유지 |
+| `end_tracking` | 검증·리뷰는 `pending` 그대로, `1/3` 변화 없음 |
+| 플러그인 제거 → 재설치 | 데이터 파일 유지, 재설치 후 프로젝트가 그대로 보임 |
+| 좁은 창 | `0%`가 막대 아래 줄로 내려가고 바 밑에 `↓ 2 more`가 생김 |
+
+두 번째 탭에서 작업을 `in_progress`로 바꿀 때 도구 호출 4번 중 2번이 실패로 표시됐습니다. 최종 상태는 맞았지만 실패 메시지는 확인하지 않았습니다.
+
+### Claude Desktop Code 탭
+
+| 항목 | 결과 |
+| --- | --- |
+| Desktop **2.9939.4**(Code 탭 Claude Code **2.1.284**) | 플러그인은 로드되고(MCP 서버 실행, 훅으로 세션 연결) 추적도 기록되지만 **바가 보이지 않음**. 2.1.284는 바(`AbovePrompt`)를 지원하는 2.1.290보다 낮음 |
+| Desktop **5.11492.5**(Code 탭 Claude Code **2.1.325**)로 업데이트 후 | **바가 보임** |
+
+Linux Desktop은 스스로 업데이트하지 않습니다. 이 PC에서는 Ubuntu 업그레이드 때 Claude Desktop apt 저장소가 `.list.disabled`로 꺼져 Desktop이 2.9939.4에 머물러 있었습니다. 바가 안 보이면 `apt-cache policy claude-desktop`으로 설치 버전과 후보 버전을 먼저 확인하세요. 5.11492.5의 Code 탭에는 Chat 탭용 `.mcpb` 확장의 도구도 플러그인 도구와 별도로 함께 나타났습니다.
+
+### Claude Desktop Chat 탭
+
+| 항목 | 결과 |
+| --- | --- |
+| 릴리스 `.mcpb` | **설치 불가.** 매니페스트가 `"platforms": ["win32"]`라 Desktop이 「Windows가 필요합니다」를 표시하고 설치 버튼이 비활성 |
+| `platforms`에 `linux`만 더한 시험용 사본 | 설치 성공(서명 없음). Desktop 내장 Node로 서버 연결, 커넥터 목록에 표시, 추적 요청 시 **카드 표시**(Desktop 2.9939.4) |
+
+**확인하지 않은 것:** Desktop Code 탭 바의 상세·언어·범위 버튼, Chat 탭 카드의 갱신·재연결·재시작, Desktop 5.11492.5에서의 Chat 탭 카드, 터미널의 `CLAUDE_CODE_NO_FLICKER` 전체 화면 렌더러, Codex·ChatGPT.
+
 ## 실제 앱에서 남은 확인
 
 | 플랫폼 | 확보한 근거 | 다음에 확인할 항목 |
@@ -135,5 +189,7 @@ node dist/cli.js preview
 This beta is scoped to one Windows user on one PC. Installation and basic operation come before platform optimization and new features. On 2026-11-13, Node 22.20.0/npm 10.9.3 passed clean dependency installation, typecheck, 49 Node tests, 12 native band tests under Claude Code 2.1.322 (rerun with 2.1.323), and packaging. All three extracted runtimes were exercised outside the repository without installing dependencies: stdio discovery, UI resources, shared task progress, one-use preview and restart persistence passed. These checks do not establish a fresh installation or live UI flow in every host. ChatGPT's real account/tunnel connection remains unverified. Use the beta release assets or build the same packages from source.
 
 After installing the host integration, restart the host and open a new conversation. Ask it to start CheckYourProcess tracking with three steps: implement, verify, review. Open the progress card, complete one step, and confirm 1/3 (33%). Join the same project from another session using the existing project ID and link an existing task; project progress must count that task once. Check both languages and persistence after restart.
+
+A first Linux check (Ubuntu x86_64, 2026-11-17) is recorded above. The Claude Code terminal (2.1.326) passed tracking, shared project progress, the details/language/scope buttons in the default renderer, disconnect/auto-recovery, resume, end and uninstall. The release ZIP has no documented persistent install path without a source build, and the documented `marketplace add ./release/claude-marketplace.json` failed on 2.1.326. The Desktop Code tab showed no band on Desktop 2.9939.4 (Claude Code 2.1.284) and showed it after updating to 5.11492.5 (2.1.325). The release `.mcpb` declares `win32` only and cannot be installed on Linux; a test copy with `linux` added installed and displayed the card in the Chat tab.
 
 Review new Codex lifecycle hooks before expecting observed activity. Claude Code supports `/checkyourprocess:track`; Claude Desktop Chat uses the `.mcpb` installer. ChatGPT needs a separate account-side MCP/tunnel connection. Report host/version/reproduction details without credentials or private task data.
